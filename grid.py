@@ -10,6 +10,8 @@ class Grid:
         self.numcols = numcols
         #all cells given in clean
         self.cells = [[Cell(i,j) for j in range(numcols)] for i in range(numrows)]
+        #set hard cells
+        self.setHardCells()
 
     def setHardCells(self):
         #iterate to find 8 center cells
@@ -27,7 +29,7 @@ class Grid:
                         if random.random() >= 0.5:
                             self.cells[irow][icol].setDiff(2)
 
-
+    #coordinate functions
     def getRandomCoord(self):
         #random legal row
         randrow = random.randint(0, self.numrows - 1)
@@ -43,7 +45,8 @@ class Grid:
         if coord.row >= 0 and coord.row < self.numrows and coord.col >= 0 and coord.col < self.numcols:
             legal = True
         return legal
-
+    #coordinate functions
+    
     #gets Cell color
     def getCColor(self,row,col):
         return self.cells[row][col].color

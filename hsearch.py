@@ -6,7 +6,6 @@ def main():
     numrows = 120
     numcols = 160
     grid = Grid(numrows , numcols)
-    grid.setHardCells()
 
     #draw
     GridUI(grid).mainloop()
