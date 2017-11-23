@@ -7,7 +7,7 @@ def main():
     numcols = 160
     grid = Grid(numrows , numcols)
 
-    #draw
+    # draw
     GridUI(grid).mainloop()
 
 
