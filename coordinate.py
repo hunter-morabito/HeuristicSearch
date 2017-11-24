@@ -4,8 +4,12 @@ class Coordinate:
         self.row = row
         self.col = col
 
-    # returns a string detailing the information of the coordinates
+    # returns a string giving row and col; used for file output
     def __repr__(self):
+        return "%d %d" % (self.row , self.col)
+
+    # returns a more detailed string about Coordinates
+    def __str__(self):
         return "Row: %d,  Col: %d" % (self.row , self.col)
 
     # overrides equals comparison in order to compare coordinates

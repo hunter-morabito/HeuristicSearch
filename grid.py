@@ -1,42 +1,93 @@
 from abc import ABCMeta
 from cell import Cell
 from coordinate import Coordinate
+import math
 import random
 
 class Grid:
     # grid objects will be abstract for different A* algorithms
     __metaclass__ = ABCMeta
 
-    def __init__(self,numrows,numcols):
+    def __init__(self,numrows,numcols,numhardcenters,numhighways,percentofblocked,filename):
         # num of rows
         self.numrows = numrows
         # num of columns
         self.numcols = numcols
-        # all cells given in clean
-        self.cells = [[Cell(i,j) for j in range(numcols)] for i in range(numrows)]
-        # set hard cells
-        self.setHardTerrain()
-        # set highway and river paths
-        self.setHighways()
-        # set blocked cells
-        self.setBlockedTerrain()
-        # set start and goal cells
-        self.setStartGoal()
+        #keeps track of centers being used
+        self.hardCenterList = []
+        #keeps track of Start Coordinate
+        self.startCoordinate = None
+        # keeps track of Goal Coordinate
+        self.goalCoordinate = None
+        # file name is given
+        # TODO: make this constructor loop take in flags and gather data about grid
+        if filename is not None:
+            with open(filename) as f:
+                #parse start coordinate
+                temp = f.readline().split(" ")
+                self.startCoordinate = Coordinate(int(temp[0]),int(temp[1]))
+
+                #parse goal coordinate
+                temp = f.readline().split(" ")
+                self.goalCoordinate = Coordinate(int(temp[0]),int(temp[1]))
+
+                # parse and collect hard center coordinates
+                for i in range(numhardcenters):
+                    temp = f.readline().split(" ")
+                    self.hardCenterList.append(Coordinate(int(temp[0]),int(temp[1])))
+
+                # initiize the grid with cell objects
+                self.cells = [[Cell(i,j) for j in range(numcols)] for i in range(numrows)]
+                # iterate through rows
+                for row in range(0,numrows):
+                    # get entire row as string
+                    rowstring = f.readline()
+                    # iterate trough 'columns' of rownstring
+                    for col in range(0,numcols):
+                        # assign terrains
+                        self.cells[row][col].setTerrain(rowstring[col])
+            # close file
+            f.closed
+        # no file name is given
+        else:
+            # all cells given in clean
+            self.cells = [[Cell(i,j) for j in range(numcols)] for i in range(numrows)]
+            # set hard cells
+            self.setHardTerrain(numhardcenters)
+            # set highway and river paths
+            self.setHighways(numhighways)
+            # set blocked cells
+            self.setBlockedTerrain(percentofblocked)
+            # set start and goal cells
+            self.selectStartGoal()
+        #assign proper colors to START and GOAL Cells
+        self.setStartGoalColors()
+
 
     # randomly place START and GOAL cells in random regions
-    def setStartGoal(self):
+    def selectStartGoal(self):
         while True:
             startCoordinate = self.getRandomKeyCoordinate()
             goalCoordinate = self.getRandomKeyCoordinate()
+
+            # calculate Euclidean distance given (x1, y1),(x2, y2) using formula:
+            # sqrt((x2 - x1)^2 + (y2 - y1)^2)
+            eDistance = math.sqrt(math.pow((goalCoordinate.row - startCoordinate.row),2)+math.pow((goalCoordinate.col - startCoordinate.col),2))
+
             # TODO: fix scalability of this first if statement
-            # checks to see if cells are within 100 cells of each other using shortest distance
-            if startCoordinate.row not in range(goalCoordinate.row - 100, goalCoordinate.row + 100) and startCoordinate.col not in range(goalCoordinate.col - 100,goalCoordinate.col + 100):
+            # checks to see if cells are within 100 cells of each other using absolute value of Euclidean distance
+            if math.fabs(eDistance) >= 100:
                 # check to make sure cells are not  blocked cells
-                if self.cells[startCoordinate.row][startCoordinate.col].terrain != 0:
-                    if self.cells[goalCoordinate.row][goalCoordinate.col].terrain != 0:
+                if self.cells[startCoordinate.row][startCoordinate.col].terrain != "0":
+                    if self.cells[goalCoordinate.row][goalCoordinate.col].terrain != "0":
                         break
-        self.cells[startCoordinate.row][startCoordinate.col].color = "green"
-        self.cells[goalCoordinate.row][goalCoordinate.col].color = "red"
+        self.startCoordinate = startCoordinate
+        self.goalCoordinate = goalCoordinate
+
+    def setStartGoalColors(self):
+        self.cells[self.startCoordinate.row][self.startCoordinate.col].color = "green"
+        self.cells[self.goalCoordinate.row][self.goalCoordinate.col].color = "red"
+
 
     # helper function to get start and goal coordinates
     def getRandomKeyCoordinate(self):
@@ -59,23 +110,23 @@ class Grid:
         return Coordinate(rowCoord, colCoord)
 
     #randomly assigns areas with difficult terrain
-    def setHardTerrain(self):
-        centerList = []         #keeps track of centers being used
+    def setHardTerrain(self, numhardcenters):
+        #keeps track of centers being used
         hardTerrainList = []    #holds terrain to be changed to HARD
         #iterate to find 8 center cells
-        for i in range(8):
+        for i in range(numhardcenters):
             #get center cell coordinate
             while True:
                 centerCoord = self.getRandomCoord()
                 #breaks loop if center coordinate is not already being used
-                if centerCoord not in centerList:
+                if centerCoord not in self.hardCenterList:
                     #add to list as being used
-                    centerList.append(centerCoord)
+                    self.hardCenterList.append(centerCoord)
                     break
 
             #iterate through 31 x 31 block of cells around center
             #start at row 15 up from center, end 15 below center
-            for irow in range (centerCoord.row - 15 , centerCoord.row + 15):
+            for irow in range(centerCoord.row - 15 , centerCoord.row + 15):
                 #start at col 15 left of center, end 15 right of center
                 for icol in range(centerCoord.col - 15 , centerCoord.col + 15):
                     #verify that given coordinate is legal
@@ -85,12 +136,12 @@ class Grid:
                             hardTerrainList.append(Coordinate(irow,icol))
 
         #update terrain
-        self.changeTerrain(hardTerrainList, 2)
+        self.changeTerrain(hardTerrainList, "2")
 
     #randomly assigns 20% of the grid with blocked cells
-    def setBlockedTerrain(self):
+    def setBlockedTerrain(self, percentofblocked):
         #get 20% of total cells
-        blockedTotal = (self.numrows * self.numcols) / 5
+        blockedTotal = int((self.numrows * self.numcols) * (percentofblocked/100.0))
         #blocked cells counter
         blocked = 0
         #holds blocked coordinates
@@ -104,10 +155,10 @@ class Grid:
                 blockedList.append(randCoord)
                 blocked += 1
         #change cell terrain at collected coordinates
-        self.changeTerrain(blockedList, 0)
+        self.changeTerrain(blockedList, "0")
 
     # sets highway terrain
-    def setHighways(self):
+    def setHighways(self, numhighways):
         # these directions and sides will start at the top, and run clockwise
         # 0 = UP
         # 1 = RIGHT
@@ -128,7 +179,7 @@ class Grid:
         currentHighwayCoordinates = []  # used to hold current highway coordinates
 
         # loop until 4 highways are complete
-        while completeCount != 4:
+        while completeCount != numhighways:
             #if highways overlap or a highway gets completed, start again
             if restart:
                 # loop is to get starting cell that is not already a highway
@@ -287,19 +338,35 @@ class Grid:
     def changeTerrain(self, coordinateList, terrain):
         for coord in coordinateList:
             cell = self.cells[coord.row][coord.col]
-            if terrain == 0:
-                cell.setTerrain(0)
-            elif terrain == 1:
-                cell.setTerrain(1)
-            elif terrain == 2:
-                cell.setTerrain(2)
+            if terrain == "0":
+                cell.setTerrain("0")
+            elif terrain == "1":
+                cell.setTerrain("1")
+            elif terrain == "2":
+                cell.setTerrain("2")
             elif terrain == "highway":
-                if cell.terrain == 1:
+                if cell.terrain == "1":
                     cell.setTerrain("a")
-                elif cell.terrain == 2:
+                elif cell.terrain == "2":
                     cell.setTerrain("b")
     # coordinate helper functions end
 
     # gets Cell color
     def getCColor(self,row,col):
         return self.cells[row][col].color
+
+    # outputs grid object to given path
+    def outputToFile(self,fileName):
+        f = open(fileName , 'w')
+        # print Start Coordinate
+        f.write(repr(self.startCoordinate) + "\n")
+        # print Goal Coordinate
+        f.write(repr(self.goalCoordinate) +"\n")
+        # print center cell locations
+        for coord in self.hardCenterList:
+            f.write(repr(coord)+"\n")
+        for row in range(0, self.numrows):
+            for col in range(0, self.numcols):
+                f.write(str(self.cells[row][col].terrain))
+            f.write("\n")
+        f.close()
