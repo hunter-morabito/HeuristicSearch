@@ -13,9 +13,9 @@ class Grid:
         self.numrows = numrows
         # num of columns
         self.numcols = numcols
-        #keeps track of centers being used
+        # keeps track of centers being used
         self.hardCenterList = []
-        #keeps track of Start Coordinate
+        # keeps track of Start Coordinate
         self.startCoordinate = None
         # keeps track of Goal Coordinate
         self.goalCoordinate = None
@@ -63,6 +63,39 @@ class Grid:
         #assign proper colors to START and GOAL Cells
         self.setStartGoalColors()
 
+    # A* Helper methods
+    def getNeighbors(self,cell):
+        neighbors = []
+        #neighbors are labeled as the following:
+        #         N1 N2 N3
+        #         N8 ## N4
+        #         N7 N6 N5
+        # Add N1
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row - 1,cell.coordinate.col - 1)):
+             neighbors.append(self.cells[cell.coordinate.row - 1][cell.coordinate.col - 1])
+        # Add N2
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row - 1,cell.coordinate.col)):
+             neighbors.append(self.cells[cell.coordinate.row - 1][cell.coordinate.col])
+        # Add N3
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row - 1,cell.coordinate.col + 1)):
+             neighbors.append(self.cells[cell.coordinate.row - 1][cell.coordinate.col + 1])
+        # Add N4
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row,cell.coordinate.col + 1)):
+             neighbors.append(self.cells[cell.coordinate.row][cell.coordinate.col + 1])
+        # Add N5
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row + 1,cell.coordinate.col + 1)):
+             neighbors.append(self.cells[cell.coordinate.row + 1][cell.coordinate.col + 1])
+        # Add N6
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row + 1,cell.coordinate.col)):
+             neighbors.append(self.cells[cell.coordinate.row + 1][cell.coordinate.col])
+        # Add N7
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row + 1,cell.coordinate.col - 1)):
+             neighbors.append(self.cells[cell.coordinate.row + 1][cell.coordinate.col - 1])
+        # Add N8
+        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row,cell.coordinate.col - 1)):
+             neighbors.append(self.cells[cell.coordinate.row][cell.coordinate.col - 1])
+        return neighbors
+
     # randomly selects START and GOAL coordinates in random regions
     def selectStartGoal(self):
         while True:
@@ -71,9 +104,10 @@ class Grid:
 
             # calculate Euclidean distance given (x1, y1),(x2, y2) using formula:
             # sqrt((x2 - x1)^2 + (y2 - y1)^2)
-            eDistance = math.sqrt(math.pow((goalCoordinate.row - startCoordinate.row),2)+math.pow((goalCoordinate.col - startCoordinate.col),2))
+            eDistance = math.sqrt( math.pow( (goalCoordinate.row - startCoordinate.row), 2) \
+                                +  math.pow( (goalCoordinate.col - startCoordinate.col), 2) )
 
-            # TODO: fix scalability of this first if statement
+            # TODO: fix scalability of this first 'if' statement
             # checks to see if cells are within 100 cells of each other using absolute value of Euclidean distance
             if math.fabs(eDistance) >= 100:
                 # check to make sure cells are not  blocked cells

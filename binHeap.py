@@ -4,7 +4,7 @@ class BinaryHeap:
     def __init__(self):
         # heapList will hold our data
         # initialize with root with f key of 0 in order to
-        self.heapList = [Cell(0,0)]
+        self.heapList = [Cell(-1,-1)]
         # size holds the current size of the heap
         self.size = 0
 
@@ -62,6 +62,7 @@ class BinaryHeap:
         self.pushDown(i)
         return popped
 
+    # returns minimum f cell
     def pop(self):
         return self.popIndex(1)
 
@@ -71,13 +72,19 @@ class BinaryHeap:
         self.popIndex(self.findIndexByKey(1,key))
         # pop its index
 
+    def contains(self,key):
+        exists = False
+        if self.findIndexByKey(1,key) != -1:
+            exists = True
+        return exists
+
     # recursive method traversing the heapList, returning the index of the located cell
     # IMPORTANT: must initially pass in '1' as 'i' argument
     def findIndexByKey(self, i, key):
-        #given node, check if has left child
-        if key == self.heapList[i]:
-            print self.heapList[i].f
-            return i
+        #check given node, check if has left child
+        if i <= self.size:
+            if key == self.heapList[i]:
+                return i
         if (i * 2) <= self.size:
             #check if child is what were trying to find
             if key == self.heapList[(i*2)]:

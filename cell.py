@@ -15,7 +15,10 @@ class Cell:
         # difficulty
         self.terrain = "1"
         self.f = 0
+        self.g = 0
+        self.h = 0
         self.coordinate = Coordinate(row, col)
+        self.parent = None
 
     # change difficulty also requires an update in color
     def setTerrain(self, terrain):

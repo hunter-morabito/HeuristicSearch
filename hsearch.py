@@ -2,6 +2,7 @@ import sys
 import os.path
 from grid import Grid
 from gridui import GridUI
+from astarbase import AStarBase
 import time
 
 def main(args):
@@ -29,10 +30,11 @@ def main(args):
     else:
         grid = Grid(numrows , numcols , numhardcenters, numhighways, percentofblocked, None)
 
+    AStarBase(grid)
     # output to file
-    grid.outputToFile('bin/gridLog.txt')
+    # grid.outputToFile('bin/gridLog.txt')
     # draw
-    GridUI(grid).mainloop()
+    # GridUI(grid).mainloop()
 
 
 if __name__ == "__main__":
