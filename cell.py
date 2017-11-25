@@ -9,12 +9,12 @@
 #     HARDHIGH = "b"
 from coordinate import Coordinate
 
-
 class Cell:
     def __init__(self, row, col):
         self.color = "white"
         # difficulty
         self.terrain = "1"
+        self.f = 0
         self.coordinate = Coordinate(row, col)
 
     # change difficulty also requires an update in color
@@ -33,3 +33,14 @@ class Cell:
         elif self.terrain == "b":       # HARD HIGHWAY
             # color is a darker shade of purple
             self.color = "#41008c"
+
+    # overrides equals comparison in order to compare coordinates
+    def __eq__(self, other):
+        if isinstance(self , other.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    # this __ne__ function is required in Python 2.7, but not in Python 3
+    # overrides not equals comparison in order to compare coordinates
+    def __ne__(self, other):
+        return not self.__eq__(other)

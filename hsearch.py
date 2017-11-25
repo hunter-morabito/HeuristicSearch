@@ -5,7 +5,7 @@ from gridui import GridUI
 import time
 
 def main(args):
-    # TODO: make input flags to make these scalable
+    # TODO: make input flags to make these parameters mutable
     numrows = 120
     numcols = 160
     numhardcenters = 8

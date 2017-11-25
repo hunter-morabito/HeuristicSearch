@@ -63,8 +63,7 @@ class Grid:
         #assign proper colors to START and GOAL Cells
         self.setStartGoalColors()
 
-
-    # randomly place START and GOAL cells in random regions
+    # randomly selects START and GOAL coordinates in random regions
     def selectStartGoal(self):
         while True:
             startCoordinate = self.getRandomKeyCoordinate()
@@ -84,10 +83,10 @@ class Grid:
         self.startCoordinate = startCoordinate
         self.goalCoordinate = goalCoordinate
 
+    # assigns colors to START and GOAL cells
     def setStartGoalColors(self):
         self.cells[self.startCoordinate.row][self.startCoordinate.col].color = "green"
         self.cells[self.goalCoordinate.row][self.goalCoordinate.col].color = "red"
-
 
     # helper function to get start and goal coordinates
     def getRandomKeyCoordinate(self):
