@@ -4,22 +4,37 @@ from grid import Grid
 from gridui import GridUI
 from astarbase import AStarBase
 import time
+import copy
+
 
 def main(args):
     # TODO: make input flags to make these parameters mutable
+    #change back to 120
     numrows = 120
+    #changebackto 160
     numcols = 160
     numhardcenters = 8
     numhighways = 4
     percentofblocked = 20
+    maps = []
     # check for filename input
     if len(args) > 0:
-        filename = "bin/" + args[0]
+        #changing for input
+        # filename = "bin/" + args[0]
+        filename = args[0]
         # file exists
-        if os.path.isfile(filename):
+        if filename == "deliverable":
+        # need to make 'deliverable' for now...
+        # if os.path.isfile(filename):
             # attempt to build grid from input
             try:
-                grid = Grid(numrows, numcols, numhardcenters, numhighways, percentofblocked, filename)
+                for i in range(5):
+                    grid = Grid(numrows , numcols , numhardcenters, numhighways, percentofblocked, 'bin/gridLog'+str(i)+'.txt')
+                    for j in range(10):
+                        maps.append(grid)
+                        grid = copy.deepcopy(grid)
+                for m in maps:
+                    m.selectStartGoal()
             except:
                 print "Error Occurred when reading from file\nMake sure file format is correct"
         # file does not exist
@@ -28,13 +43,19 @@ def main(args):
             return
     # no file argumaent given
     else:
-        grid = Grid(numrows , numcols , numhardcenters, numhighways, percentofblocked, None)
+        for i in range(5):
+            grid = Grid(numrows , numcols , numhardcenters, numhighways, percentofblocked, None)
+            grid.outputToFile('bin/gridLog'+str(i+1)+'.txt')
+            for j in range(10):
+                maps.append(grid)
+                grid = copy.deepcopy(grid)
+        for m in maps:
+            m.selectStartGoal()
 
-    AStarBase(grid)
-    # output to file
-    # grid.outputToFile('bin/gridLog.txt')
+
+
     # draw
-    # GridUI(grid).mainloop()
+    GridUI(maps).mainloop()
 
 
 if __name__ == "__main__":

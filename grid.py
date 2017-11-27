@@ -61,40 +61,8 @@ class Grid:
             # set start and goal cells
             self.selectStartGoal()
         #assign proper colors to START and GOAL Cells
-        self.setStartGoalColors()
+        # self.setStartGoalColors()
 
-    # A* Helper methods
-    def getNeighbors(self,cell):
-        neighbors = []
-        #neighbors are labeled as the following:
-        #         N1 N2 N3
-        #         N8 ## N4
-        #         N7 N6 N5
-        # Add N1
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row - 1,cell.coordinate.col - 1)):
-             neighbors.append(self.cells[cell.coordinate.row - 1][cell.coordinate.col - 1])
-        # Add N2
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row - 1,cell.coordinate.col)):
-             neighbors.append(self.cells[cell.coordinate.row - 1][cell.coordinate.col])
-        # Add N3
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row - 1,cell.coordinate.col + 1)):
-             neighbors.append(self.cells[cell.coordinate.row - 1][cell.coordinate.col + 1])
-        # Add N4
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row,cell.coordinate.col + 1)):
-             neighbors.append(self.cells[cell.coordinate.row][cell.coordinate.col + 1])
-        # Add N5
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row + 1,cell.coordinate.col + 1)):
-             neighbors.append(self.cells[cell.coordinate.row + 1][cell.coordinate.col + 1])
-        # Add N6
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row + 1,cell.coordinate.col)):
-             neighbors.append(self.cells[cell.coordinate.row + 1][cell.coordinate.col])
-        # Add N7
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row + 1,cell.coordinate.col - 1)):
-             neighbors.append(self.cells[cell.coordinate.row + 1][cell.coordinate.col - 1])
-        # Add N8
-        if self.verifyCoordInBounds(Coordinate(cell.coordinate.row,cell.coordinate.col - 1)):
-             neighbors.append(self.cells[cell.coordinate.row][cell.coordinate.col - 1])
-        return neighbors
 
     # randomly selects START and GOAL coordinates in random regions
     def selectStartGoal(self):
@@ -116,6 +84,7 @@ class Grid:
                         break
         self.startCoordinate = startCoordinate
         self.goalCoordinate = goalCoordinate
+
 
     # assigns colors to START and GOAL cells
     def setStartGoalColors(self):
@@ -387,6 +356,9 @@ class Grid:
     # gets Cell color
     def getCColor(self,row,col):
         return self.cells[row][col].color
+
+    def getCell(self,row,col):
+        return self.cells[row][col]
 
     # outputs grid object to given path
     def outputToFile(self,fileName):

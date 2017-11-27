@@ -23,7 +23,6 @@ class BinaryHeap:
     def insert(self, key):
         # add the key to the list
         self.heapList.append(key)
-        print "Added: " , key.coordinate , "\n"
         # increment the size of the list
         self.size += 1
         # push the new node up the list
@@ -58,6 +57,7 @@ class BinaryHeap:
         popped = self.heapList[i]
         self.heapList[i] = self.heapList[self.size]
         self.size -= 1
+        # pop removes the last item in the list
         self.heapList.pop()
         self.pushDown(i)
         return popped
@@ -89,7 +89,6 @@ class BinaryHeap:
             #check if child is what were trying to find
             if key == self.heapList[(i*2)]:
                 #child is what were trying to find, return index
-                print self.heapList[i*2].f
                 return i*2
             # recursive call to go down left child
             index = self.findIndexByKey(i*2, key)
@@ -99,7 +98,6 @@ class BinaryHeap:
             if (i * 2) + 1 <= self.size:
                 # check if right child is what were looking for
                 if key == self.heapList[(i*2)+1]:
-                    print self.heapList[i*2+1].f
                     return (i*2)+1
                 # recrsuve call to go down right child
                 index = self.findIndexByKey((i*2)+1, key)
@@ -116,26 +114,28 @@ class BinaryHeap:
 
 
 # used to test the Binary Heap
-# def main():
-#     bHeap = BinaryHeap()
-#     c1 = Cell(1,1)
-#     c1.f = 0
-#     c2 = Cell(1,2)
-#     c2.f = 4
-#     c3 = Cell(1,5)
-#     c3.f = 66
-#     c4 = Cell(1,3)
-#     c4.f = 3
-#     c5 = Cell(1,4)
-#     c5.f = 2
-#     bHeap.insert(c1)
-#     bHeap.insert(c2)
-#     bHeap.insert(c3)
-#     bHeap.insert(c4)
-#     bHeap.insert(c5)
-#     print bHeap.findIndexByKey(1,c2)
-#
-#
-#
-# if __name__ == "__main__":
-#     main()
+def main():
+    bHeap = BinaryHeap()
+    c1 = Cell(1,1)
+    c1.f = 33
+    c2 = Cell(1,2)
+    c2.f = 4
+    c3 = Cell(1,5)
+    c3.f = 66
+    c4 = Cell(1,3)
+    c4.f = 3
+    c5 = Cell(1,4)
+    c5.f = 6
+    bHeap.insert(c1)
+    bHeap.insert(c2)
+    bHeap.insert(c3)
+    bHeap.insert(c4)
+    bHeap.insert(c5)
+    bHeap.pop()
+    print str(bHeap.contains(c4))
+    print bHeap.findIndexByKey(1,c1)
+
+
+
+if __name__ == "__main__":
+    main()
